@@ -1,3 +1,4 @@
+pip install streamlit pandas haversine 
 import streamlit as st
 import pandas as pd
 from haversine import haversine
