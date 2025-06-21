@@ -107,40 +107,71 @@ else:
     st.info("이 결과는 전문 진단이 아닙니다. 증상이 지속되거나 심하다면 꼭 전문가의 도움을 받아보세요.")
 
 
-    # -------------------- 다시 시작 & ChatGPT 버튼 --------------------
-col1, col2 = st.columns(2)
+# ------------------ 페이지 전환 초기화 ------------------
+if "page" not in st.session_state:
+    st.session_state.page = "main"
 
-with col1:
-    if st.button("🔁 다시 시작하기"):
-        st.session_state.current_q = 0
-        st.session_state.scores = {}
-        st.rerun()
+# ------------------ 페이지 1: 결과 화면 ------------------
+if st.session_state.page == "main":
+    col1, col2 = st.columns(2)
 
-with col2:
-    if st.button("💬 혹시 나랑 더 얘기하고 싶어?"):
-        st.session_state.show_chat = True
+    with col1:
+        if st.button("🔁 다시 시작하기"):
+            st.session_state.current_q = 0
+            st.session_state.scores = {}
+            st.session_state.page = "main"
+            st.rerun()
 
-# -------------------- ChatGPT 간단 대화창 --------------------
-if st.session_state.get("show_chat", False):
-    st.markdown("### 🤖 ChatGPT와 이야기해봐요")
-    st.write("지금 느끼는 감정이나 고민을 편하게 적어주세요. 내가 잘 들어줄게요 💚")
+    with col2:
+        if st.button("💬 혹시 나랑 더 얘기하고 싶어?"):
+            st.session_state.page = "chat"
+            st.rerun()
+
+# ------------------ 페이지 2: ChatGPT 상담 ------------------
+elif st.session_state.page == "chat":
+    st.markdown("## 🤖 ChatGPT와 감정 나누기")
+    st.write("지금 어떤 기분이든 괜찮아요. 마음을 편하게 표현해봐요.")
 
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
 
-    user_input = st.text_input("당신의 이야기", key="chat_input")
+    user_input = st.text_input("💬 당신의 이야기", key="chat_input")
+
+    # 간단한 공감 응답 생성 함수
+    def generate_empathy_response(user_message):
+        responses = [
+            "그런 기분이 드는 건 정말 자연스러운 일이에요.",
+            "말해줘서 고마워요. 혼자가 아니라는 걸 기억해요.",
+            "지금 느끼는 감정을 소중하게 다뤄주는 게 정말 중요해요.",
+            "많이 힘들었을 것 같아요. 조금만 쉬어가도 괜찮아요.",
+            "괜찮아요, 그 마음 이해해요. 여기에 있어줄게요."
+        ]
+        return responses[len(user_message) % len(responses)]
 
     if user_input:
-        # 여기는 실제로는 OpenAI GPT API로 연결 가능
-        response = "고마워요, 말해줘서. 지금 느끼는 감정을 너무 억누르지 않아도 괜찮아요. 당신은 충분히 소중한 사람이에요."
-
-        # 대화 기록 저장
-        st.session_state.chat_history.append(("🙋‍♀️ 나", user_input))
-        st.session_state.chat_history.append(("🤖 ChatGPT", response))
-
+        bot_response = generate_empathy_response(user_input)
+        st.session_state.chat_history.append(("나", user_input))
+        st.session_state.chat_history.append(("ChatGPT", bot_response))
         st.rerun()
 
-    # 대화 기록 출력
-    for speaker, text in st.session_state.chat_history:
-        st.write(f"**{speaker}**: {text}")
+    # 대화 말풍선 UI 출력
+    for speaker, msg in st.session_state.chat_history:
+        if speaker == "나":
+            st.markdown(f"""
+            <div style="text-align: right; background-color:#DCF8C6; padding:10px; border-radius:10px; margin:5px; display:inline-block; max-width:75%;">
+                <strong>{speaker}</strong>: {msg}
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown(f"""
+            <div style="text-align: left; background-color:#F1F0F0; padding:10px; border-radius:10px; margin:5px; display:inline-block; max-width:75%;">
+                <strong>{speaker}</strong>: {msg}
+            </div>
+            """, unsafe_allow_html=True)
+
+    st.markdown("---")
+    if st.button("🔙 결과 페이지로 돌아가기"):
+        st.session_state.page = "main"
+        st.rerun()
+
 
