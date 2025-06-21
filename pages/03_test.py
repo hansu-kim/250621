@@ -106,8 +106,41 @@ else:
     st.markdown("---")
     st.info("이 결과는 전문 진단이 아닙니다. 증상이 지속되거나 심하다면 꼭 전문가의 도움을 받아보세요.")
 
-    # -------------------- 다시 시작 --------------------
+
+    # -------------------- 다시 시작 & ChatGPT 버튼 --------------------
+col1, col2 = st.columns(2)
+
+with col1:
     if st.button("🔁 다시 시작하기"):
         st.session_state.current_q = 0
         st.session_state.scores = {}
         st.rerun()
+
+with col2:
+    if st.button("💬 혹시 나랑 더 얘기하고 싶어?"):
+        st.session_state.show_chat = True
+
+# -------------------- ChatGPT 간단 대화창 --------------------
+if st.session_state.get("show_chat", False):
+    st.markdown("### 🤖 ChatGPT와 이야기해봐요")
+    st.write("지금 느끼는 감정이나 고민을 편하게 적어주세요. 내가 잘 들어줄게요 💚")
+
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = []
+
+    user_input = st.text_input("당신의 이야기", key="chat_input")
+
+    if user_input:
+        # 여기는 실제로는 OpenAI GPT API로 연결 가능
+        response = "고마워요, 말해줘서. 지금 느끼는 감정을 너무 억누르지 않아도 괜찮아요. 당신은 충분히 소중한 사람이에요."
+
+        # 대화 기록 저장
+        st.session_state.chat_history.append(("🙋‍♀️ 나", user_input))
+        st.session_state.chat_history.append(("🤖 ChatGPT", response))
+
+        st.rerun()
+
+    # 대화 기록 출력
+    for speaker, text in st.session_state.chat_history:
+        st.write(f"**{speaker}**: {text}")
+
