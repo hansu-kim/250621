@@ -1,5 +1,5 @@
 folium
-strealit_folium
+streamlit_folium
 streamlit
 yfinance
 plotly
