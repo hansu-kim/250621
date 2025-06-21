@@ -30,11 +30,9 @@ questions = [
 
 # -------------------- 척도 --------------------
 scale = {
-    "전혀 그렇지 않다": 0,
-    "가끔 그렇다": 1,
-    "종종 그렇다": 2,
-    "자주 그렇다": 3,
-    "항상 그렇다": 4
+    "😐 전혀 그렇지 않다": 0,
+    "🙂 가끔 그렇다": 1,
+    "😟 자주 그렇다": 2,
 }
 
 # -------------------- 상태 초기화 --------------------
@@ -48,7 +46,7 @@ if st.session_state.current_q < len(questions):
     q_text, category = questions[st.session_state.current_q]
     st.subheader(f"질문 {st.session_state.current_q + 1}/{len(questions)}")
     response = st.radio(q_text, list(scale.keys()), key=f"q{st.session_state.current_q}")
-    
+
     if st.button("다음"):
         score = scale[response]
         if category not in st.session_state.scores:
