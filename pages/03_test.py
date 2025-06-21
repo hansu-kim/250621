@@ -55,7 +55,7 @@ if st.session_state.current_q < len(questions):
             st.session_state.scores[category] = 0
         st.session_state.scores[category] += score
         st.session_state.current_q += 1
-        st.experimental_rerun()
+        st.rerun()
 
 # -------------------- 결과 출력 --------------------
 else:
