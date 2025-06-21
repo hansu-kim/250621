@@ -57,3 +57,30 @@ if st.session_state.current_index < len(st.session_state.players):
             answer = st.text_input(f"{country}의 수도는?")
             if answer:
                 if answer.strip() == capital:
+                    st.success("정답입니다!")
+                else:
+                    st.error(f"오답입니다. 정답은 {capital}입니다.")
+
+        elif game == "✖️ 구구단 미션":
+            a, b = random.randint(2, 9), random.randint(2, 9)
+            user_answer = st.number_input(f"{a} × {b} = ?", step=1)
+            if st.button("정답 확인"):
+                if user_answer == a * b:
+                    st.success("정답입니다!")
+                else:
+                    st.error(f"오답입니다. 정답은 {a * b}입니다.")
+
+        # 나머지 미션도 여기에 추가 가능
+
+        if st.button("➡️ 다음 사람으로"):
+            st.session_state.current_index += 1
+            st.session_state.current_game = None
+            st.experimental_rerun()
+else:
+    st.success("✅ 모든 참가자가 미션을 완료했습니다!")
+
+# 초기화
+if st.button("🔄 전체 초기화"):
+    for key in ["players", "current_index", "current_game"]:
+        st.session_state.pop(key, None)
+    st.experimental_rerun()
