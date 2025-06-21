@@ -132,46 +132,42 @@ elif st.session_state.page == "chat":
     st.markdown("## 🤖 ChatGPT와 감정 나누기")
     st.write("지금 어떤 기분이든 괜찮아요. 마음을 편하게 표현해봐요.")
 
-    if "chat_history" not in st.session_state:
-        st.session_state.chat_history = []
-
     user_input = st.text_input("💬 당신의 이야기", key="chat_input")
 
-    # 간단한 공감 응답 생성 함수
-    def generate_empathy_response(user_message):
-        responses = [
-            "그런 기분이 드는 건 정말 자연스러운 일이에요.",
-            "말해줘서 고마워요. 혼자가 아니라는 걸 기억해요.",
-            "지금 느끼는 감정을 소중하게 다뤄주는 게 정말 중요해요.",
-            "많이 힘들었을 것 같아요. 조금만 쉬어가도 괜찮아요.",
-            "괜찮아요, 그 마음 이해해요. 여기에 있어줄게요."
-        ]
-        return responses[len(user_message) % len(responses)]
+    # 공감 응답 생성 함수 (단순 예시 기반)
+    def generate_empathy_response(message):
+        keywords = {
+            "힘들": "많이 힘드셨죠. 그런 감정을 느끼는 건 너무나 자연스러운 일이에요.",
+            "외롭": "외로움을 느낄 때도 있죠. 혼자가 아니라는 걸 잊지 마세요.",
+            "불안": "불안한 마음, 참 지치죠. 잠시 숨을 고르고 천천히 이야기해도 괜찮아요.",
+            "우울": "우울한 감정은 누구나 겪을 수 있어요. 함께 있어줄게요.",
+            "짜증": "짜증날 만한 일이었겠네요. 그렇게 느끼는 건 당연해요.",
+            "무기력": "무기력할 땐 아무것도 하기 싫죠. 그냥 가만히 있어도 괜찮아요.",
+            "괴로": "그만큼 마음이 아팠던 거겠죠. 그 감정, 소중해요.",
+        }
+        for word, resp in keywords.items():
+            if word in message:
+                return resp
+        return "이야기해줘서 고마워요. 당신의 감정은 소중하고 존중받아야 해요."
 
     if user_input:
         bot_response = generate_empathy_response(user_input)
-        st.session_state.chat_history.append(("나", user_input))
-        st.session_state.chat_history.append(("ChatGPT", bot_response))
-        st.rerun()
 
-    # 대화 말풍선 UI 출력
-    for speaker, msg in st.session_state.chat_history:
-        if speaker == "나":
-            st.markdown(f"""
-            <div style="text-align: right; background-color:#DCF8C6; padding:10px; border-radius:10px; margin:5px; display:inline-block; max-width:75%;">
-                <strong>{speaker}</strong>: {msg}
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.markdown(f"""
-            <div style="text-align: left; background-color:#F1F0F0; padding:10px; border-radius:10px; margin:5px; display:inline-block; max-width:75%;">
-                <strong>{speaker}</strong>: {msg}
-            </div>
-            """, unsafe_allow_html=True)
+        # 사용자 말풍선
+        st.markdown(f"""
+        <div style="text-align: right; background-color:#DCF8C6; padding:10px; border-radius:10px; margin:5px; display:inline-block; max-width:75%;">
+            <strong>나</strong>: {user_input}
+        </div>
+        """, unsafe_allow_html=True)
+
+        # 챗지피티 응답 말풍선
+        st.markdown(f"""
+        <div style="text-align: left; background-color:#F1F0F0; padding:10px; border-radius:10px; margin:5px; display:inline-block; max-width:75%;">
+            <strong>ChatGPT</strong>: {bot_response}
+        </div>
+        """, unsafe_allow_html=True)
 
     st.markdown("---")
     if st.button("🔙 결과 페이지로 돌아가기"):
         st.session_state.page = "main"
         st.rerun()
-
-
