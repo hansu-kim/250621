@@ -110,4 +110,4 @@ else:
     if st.button("🔁 다시 시작하기"):
         st.session_state.current_q = 0
         st.session_state.scores = {}
-        st.experimental_rerun()
+        st.rerun()
